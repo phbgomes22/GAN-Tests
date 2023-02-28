@@ -36,8 +36,8 @@ import torchvision.datasets as dset
 import torchvision.transforms as transforms
 import torchvision.utils as vutils
 import numpy as np
-from utils import BenchMark as BM
-from utils import CheckPoint
+# from utils import BenchMark as BM
+# from utils import CheckPoint
 from torch import autograd
 
 writer = SummaryWriter(log_dir=os.path.join(opt.tb_dir, opt.id))
@@ -423,20 +423,20 @@ while G_progress < niter*len(dataloader):
         writer.add_scalar("Loss_D_GP", errD_GP.item(), global_step=G_progress)
         writer.add_scalars("stats", {'D(G)_1':D_G_z1, 'D(G)_2':D_G_z2}, global_step=G_progress)
 
-        if G_progress % 1000 == 0:
-            netG.eval()
-            (mean, std), FID = bm.calculate_fid_IS(netG)
-            if bIS < mean:
-                bIS = mean
-                torch.save(netG, os.path.join(opt.output_dir,"G.cpt"))
-                torch.save(netD, os.path.join(opt.output_dir,"D.cpt"))
-                torch.save(D, os.path.join(opt.output_dir,"D_D.cpt"))
-                print(value = bIS, caption = "{} : {}".format(opt.id, bIS))
-            if FID < bFID:
-                bFID = FID
-            writer.add_scalar("Inception_mean", mean, global_step=G_progress)
-            writer.add_scalar("FID", FID, global_step=G_progress)
-            netG.train()
+        # if G_progress % 1000 == 0:
+        #     netG.eval()
+        #     (mean, std), FID = bm.calculate_fid_IS(netG)
+        #     if bIS < mean:
+        #         bIS = mean
+        #         torch.save(netG, os.path.join(opt.output_dir,"G.cpt"))
+        #         torch.save(netD, os.path.join(opt.output_dir,"D.cpt"))
+        #         torch.save(D, os.path.join(opt.output_dir,"D_D.cpt"))
+        #         print(value = bIS, caption = "{} : {}".format(opt.id, bIS))
+        #     if FID < bFID:
+        #         bFID = FID
+        #     writer.add_scalar("Inception_mean", mean, global_step=G_progress)
+        #     writer.add_scalar("FID", FID, global_step=G_progress)
+        #     netG.train()
 
         G_progress+=1
         schedulerD.step()

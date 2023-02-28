@@ -390,7 +390,7 @@ while G_progress < niter*len(dataloader):
             D.zero_grad()
             real_tmp = data[0].to(device)
             batch_size = real_tmp.size(0)
-            label = torch.full((batch_size,), real_label, device=device)
+            label = torch.full((batch_size,), real_label, dtype=torch.float, device=device)
             output = D(real_tmp).view(-1)
             errDD_real = criterion(output, label)
             errDD_real.backward()

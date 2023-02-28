@@ -13,7 +13,7 @@ parser.add_argument('--id', type=str, help='unique identifier')
 opt = parser.parse_args()
 
 print("Args parsed")
-sys.stderr = open(os.path.join(opt.output_dir, 'err.txt'), 'w')
+#sys.stderr = open(os.path.join(opt.output_dir, 'err.txt'), 'w')
 
 import yaml
 CONF = yaml.load(open('conf.yml'), Loader=yaml.FullLoader)
@@ -51,8 +51,8 @@ cudnn.benchmark = True
 
 Dset=CONF['Dset']
 DataRoot = CONF['DataRoot']
-ImageSize=CONF['ImageSize']
-batchSize=CONF['BS']
+ImageSize = CONF['ImageSize']
+batchSize = CONF['BS']
 
 if Dset in ['imagenet', 'folder', 'lfw']:
     # folder dataset
@@ -102,7 +102,7 @@ dataloader = torch.utils.data.DataLoader(dataset, batch_size=batchSize,
 
 device = torch.device("cuda:0")
 print(caption = "Preparing FID")
-bm=BM(dataloader, CONF, 2048, device, nz)
+#bm=BM(dataloader, CONF, 2048, device, nz)
 
 channels = 3
 

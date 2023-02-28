@@ -1,6 +1,7 @@
 from printlib import print_normal as print
 import argparse
 import os, sys
+import matplotlib.pyplot as plt
 parser = argparse.ArgumentParser()
 parser.add_argument('--output_dir', type=str, default="./",
                     help='GPUs to use.')
@@ -31,7 +32,7 @@ import torch.backends.cudnn as cudnn
 import torch.optim as optim
 import torch.utils.data
 import torchvision
-from torch.utils.tensorboard import SummaryWriter
+#from torch.utils.tensorboard import SummaryWriter
 import torchvision.datasets as dset
 import torchvision.transforms as transforms
 import torchvision.utils as vutils
@@ -40,7 +41,7 @@ import numpy as np
 # from utils import CheckPoint
 from torch import autograd
 
-writer = SummaryWriter(log_dir=os.path.join(opt.tb_dir, opt.id))
+#writer = SummaryWriter(log_dir=os.path.join(opt.tb_dir, opt.id))
 
 random.seed(CONF['SEED'])
 torch.manual_seed(CONF['SEED'])
@@ -325,6 +326,7 @@ G_progress = 0
 
 diff = 0
 
+print("Will begin training...")
 while G_progress < niter*len(dataloader):
     data_iter = iter(dataloader)
     i=0
@@ -413,35 +415,31 @@ while G_progress < niter*len(dataloader):
             errG.backward(mone)
             D_G_z2 = errG.item()
             optimizerG.step()
-            writer.add_histogram('R_{}'.format(j), ratio.data.cpu().numpy(), global_step=G_progress)
-            writer.add_histogram('R_clip_{}'.format(j), ratio_clipped.data.cpu().numpy(), global_step=G_progress)
-            writer.add_histogram('Adv_{}'.format(j), adv_targ.data.cpu().numpy(), global_step=G_progress)
-            writer.add_histogram('L_{}'.format(j), target.data.cpu().numpy(), global_step=G_progress)
+        #     writer.add_histogram('R_{}'.format(j), ratio.data.cpu().numpy(), global_step=G_progress)
+        #     writer.add_histogram('R_clip_{}'.format(j), ratio_clipped.data.cpu().numpy(), global_step=G_progress)
+        #     writer.add_histogram('Adv_{}'.format(j), adv_targ.data.cpu().numpy(), global_step=G_progress)
+        #     writer.add_histogram('L_{}'.format(j), target.data.cpu().numpy(), global_step=G_progress)
 
-        writer.add_scalar("Loss_D", errD.item(), global_step=G_progress)
-        writer.add_scalar("Loss_G", errG.item(), global_step=G_progress)
-        writer.add_scalar("Loss_D_GP", errD_GP.item(), global_step=G_progress)
-        writer.add_scalars("stats", {'D(G)_1':D_G_z1, 'D(G)_2':D_G_z2}, global_step=G_progress)
+        # writer.add_scalar("Loss_D", errD.item(), global_step=G_progress)
+        # writer.add_scalar("Loss_G", errG.item(), global_step=G_progress)
+        # writer.add_scalar("Loss_D_GP", errD_GP.item(), global_step=G_progress)
+        # writer.add_scalars("stats", {'D(G)_1':D_G_z1, 'D(G)_2':D_G_z2}, global_step=G_progress)
 
-        # if G_progress % 1000 == 0:
-        #     netG.eval()
-        #     (mean, std), FID = bm.calculate_fid_IS(netG)
-        #     if bIS < mean:
-        #         bIS = mean
-        #         torch.save(netG, os.path.join(opt.output_dir,"G.cpt"))
-        #         torch.save(netD, os.path.join(opt.output_dir,"D.cpt"))
-        #         torch.save(D, os.path.join(opt.output_dir,"D_D.cpt"))
-        #         print(value = bIS, caption = "{} : {}".format(opt.id, bIS))
-        #     if FID < bFID:
-        #         bFID = FID
-        #     writer.add_scalar("Inception_mean", mean, global_step=G_progress)
-        #     writer.add_scalar("FID", FID, global_step=G_progress)
-        #     netG.train()
+        if G_progress % 100 == 0:
+            with torch.no_grad():
+                fake = netG(fixed_noise).detach().cpu()
+            curr_fake = vutils.make_grid(fake, padding=2, normalize=True)
+            image_to_show = np.transpose(curr_fake, (1,2,0))
+            plt.figure(figsize=(5,5))
+            plt.imshow(image_to_show)
+            # saves the image representing samples from the generator
+            plt.savefig(opt.output_dir + "image" + str(G_progress) + "_" + str(i) + ".jpg")
+            plt.show()
 
         G_progress+=1
         schedulerD.step()
         schedulerG.step()
         schedulerD_D.step()
-    writer.add_image("real_sample", torchvision.utils.make_grid(real_cpu, nrow=8, normalize = True), global_step=G_progress)
-    writer.add_image("fake_sample", torchvision.utils.make_grid(fake.data, nrow=8, normalize = True), global_step=G_progress)
+    # writer.add_image("real_sample", torchvision.utils.make_grid(real_cpu, nrow=8, normalize = True), global_step=G_progress)
+    # writer.add_image("fake_sample", torchvision.utils.make_grid(fake.data, nrow=8, normalize = True), global_step=G_progress)
 print(progress = "{}/{}".format(niter*len(dataloader),niter*len(dataloader)), caption = "Done... Best IS:{}".format(bIS))

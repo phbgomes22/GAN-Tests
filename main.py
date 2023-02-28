@@ -267,14 +267,22 @@ class Discriminator_D(nn.Module):
         nn.init.xavier_uniform(self.fc.weight.data, nn.init.calculate_gain('linear'))
 
     def forward(self, x):
-        return F.sigmoid(self.fc(self.model(x).view(-1,DISC_SIZE)))
+        return torch.sigmoid(self.fc(self.model(x).view(-1,DISC_SIZE)))
 
 netG = Generator(nz).cuda()
 netD = Discriminator().cuda()
 D = Discriminator_D().cuda()
-print(netG)
+
+def count_parameters(model):
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
+
+
+params = count_parameters(netG)
+print("- Parameters on generator: ", params)
+
+params = count_parameters(netD)
+print("- Parameters on discriminator: ", params)
 print(netD)
-print(D)
 
 criterion = nn.BCELoss()
 

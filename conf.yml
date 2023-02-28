@@ -4,7 +4,7 @@ DataRoot: /DataSet/
 Diters: 5
 Dset: cifar10
 Factor_M: 0
-G_SIZE: 256
+G_SIZE: 64
 ImageSize: 32
 LAMBDA: 5
 LAMBDA2: 2

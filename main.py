@@ -312,7 +312,7 @@ schedulerG = optim.lr_scheduler.LambdaLR(optimizerG, lr_lambda=[lambda epoch: ma
 niter = CONF['niter']
 # c=0
 
-one = torch.FloatTensor([1])
+one = torch.tensor(1, dtype=torch.float)
 mone = one * -1
 one, mone = one.cuda(), mone.cuda()
 

@@ -12,10 +12,11 @@ parser.add_argument('--tb_dir', type=str, default="./",
 parser.add_argument('--id', type=str, help='unique identifier')
 opt = parser.parse_args()
 
-sys.stderr = open(os.path.join(opt.output_dir,'err.txt'), 'w')
+print("Args parsed")
+sys.stderr = open(os.path.join(opt.output_dir, 'err.txt'), 'w')
 
 import yaml
-CONF = yaml.load(open(os.path.join(opt.output_dir,'conf.yml')), Loader=yaml.FullLoader)
+CONF = yaml.load(open('conf.yml'), Loader=yaml.FullLoader)
 print(caption = "STARTED")
 
 print(CONF)

@@ -335,7 +335,7 @@ while G_progress < niter*len(dataloader):
         
         j = 0
         while j < CONF['Diters'] and i < len(dataloader):
-            data = data_iter.next()
+            data = next(data_iter)
             i += 1
             j += 1
             ############################
@@ -384,7 +384,7 @@ while G_progress < niter*len(dataloader):
             P0 = (1.-D0)/torch.clamp(D0, min = 1e-7)
 
         while j < CONF['PPO_iters'] and i < len(dataloader):
-            data = data_iter.next()
+            data = next(data_iter)
             i += 1
             j += 1
             D.zero_grad()
